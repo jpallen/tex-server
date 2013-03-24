@@ -1,0 +1,31 @@
+\documentclass{article}
+
+\newread\requestFile
+\openin\requestFile=request
+\read\requestFile to\requestHeader
+\closein\requestFile
+
+\def\parsePath#1 #2 #3\nil{#2}
+\edef\path{\expandafter\parsePath\requestHeader\nil}
+
+\immediate\newwrite\responseFile
+\immediate\openout\responseFile=response
+\immediate\write\responseFile{HTTP/1.1 200 OK}
+\immediate\write\responseFile{Content-Type: text/html}
+\immediate\write\responseFile{Server: NginTeX 0.0.1}
+\immediate\write\responseFile{}
+
+\immediate\newread\sourceFile
+\immediate\openin\sourceFile=www/\path
+\loop\unless\ifeof\sourceFile
+	\immediate\read\sourceFile to\sourceLine
+	\if \sourceLine \par
+	\else
+		\immediate\write\responseFile{\sourceLine}
+	\fi
+\repeat
+\immediate\closein\sourceFile
+\immediate\closeout\responseFile
+
+\begin{document}
+\end{document}
